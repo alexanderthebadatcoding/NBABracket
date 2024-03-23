@@ -119,6 +119,13 @@ function getSlugByAcronym(ShortName: string) {
           { acronym: "FLA", slug: "gator-nation" },
           { acronym: "NU", slug: "wildcat-alliance" },
           { acronym: "TA&M", slug: "aggie-nation" },
+          { acronym: "ARIZ", slug: "wildcat-nation" },
+          { acronym: "GONZ", slug: "the-zags" },
+          { acronym: "UNC", slug: "heel-nation" },
+          { acronym: "ISU", slug: "clone-crew" },
+          { acronym: "NCSU", slug: "the-red-pack" },
+          { acronym: "TEX", slug: "hookem-nation" },
+          { acronym: "TEX", slug: "hookem-nation" },
         ],
       },
     },
@@ -251,6 +258,7 @@ async function fetchESPNData(i: number) {
 export const app = new Frog({
   assetsPath: "/",
   basePath: "/api",
+  browserLocation: "/public",
   // Supply a Hub to enable frame verification.
   // hub: neynar({ apiKey: 'NEYNAR_FROG_FM' })
 });
