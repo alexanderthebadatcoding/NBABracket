@@ -7,6 +7,26 @@ import { handle } from "frog/vercel";
 // export const config = {
 //   runtime: 'edge',
 // }
+
+function newShade(hexColor: string, magnitude: number): string {
+  hexColor = hexColor.replace(`#`, ``);
+  if (hexColor.length === 6) {
+    const decimalColor = parseInt(hexColor, 16);
+    let r = (decimalColor >> 16) + magnitude;
+    r > 255 && (r = 255);
+    r < 0 && (r = 0);
+    let g = (decimalColor & 0x0000ff) + magnitude;
+    g > 255 && (g = 255);
+    g < 0 && (g = 0);
+    let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
+    b > 255 && (b = 255);
+    b < 0 && (b = 0);
+    return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
+  } else {
+    return hexColor;
+  }
+}
+
 function getSlugByAcronym(ShortName: string) {
   const data = {
     result: {
@@ -164,8 +184,10 @@ async function fetchESPNData(i: number) {
     // const homeTeamAlt = homeTeamData.alternateColor;
     const homeTeamColor = homeTeamData.color;
     const awayTeamColor = awayTeamData.color;
-    const awayTeamAlt = awayTeamData.alternateColor;
-    const homeTeamAlt = homeTeamData.alternateColor;
+    const awayTeamAlt = newShade(awayTeamData.alternateColor, 20);
+    const homeTeamAlt = newShade(homeTeamData.alternateColor, 20);
+    const homeBG = newShade(homeTeamColor, 69);
+    const awayBG = newShade(awayTeamColor, 69);
 
     let broadcastName = "";
     if (
@@ -248,6 +270,8 @@ async function fetchESPNData(i: number) {
       clock,
       homeSlug,
       awaySlug,
+      homeBG,
+      awayBG,
     };
   } catch (error) {
     console.error("Error fetching ESPN data:", error);
@@ -321,6 +345,8 @@ for (let i = 0; i < games?.length; i++) {
     let nextAction = i < espnData?.length - 1 ? `/${i + 1}` : null;
     let homeSlug = espnData?.homeSlug;
     let awaySlug = espnData?.awaySlug;
+    const leftArrow = "\u2190"; // Left arrow ←
+    const rightArrow = "\u2192";
     // Example usage:
     return c.res({
       // action: action,
@@ -333,9 +359,9 @@ for (let i = 0; i < games?.length; i++) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "white",
-            fontSize: 54,
-            fontWeight: 600,
+            backgroundImage: `linear-gradient(to right, ${espnData?.homeBG}, #fff, ${espnData?.awayBG})`,
+            fontSize: 66,
+            fontWeight: 900,
             color: "black",
             fontFamily: "Inter",
           }}
@@ -367,7 +393,7 @@ for (let i = 0; i < games?.length; i++) {
               <span
                 style={{
                   fontSize: "130px",
-                  color: "#" + espnData?.homeTeamAlt,
+                  color: espnData?.homeTeamAlt,
                 }}
               >
                 {espnData?.homeTeamShort}
@@ -388,7 +414,7 @@ for (let i = 0; i < games?.length; i++) {
               <span
                 style={{
                   fontSize: "130px",
-                  color: "#" + espnData?.awayTeamAlt,
+                  color: espnData?.awayTeamAlt,
                 }}
               >
                 {espnData?.awayTeamShort}
@@ -427,7 +453,7 @@ for (let i = 0; i < games?.length; i++) {
       ),
       intents: [
         <Button value="back" action={backAction}>
-          Back
+          {leftArrow}
         </Button>,
         <Button.Link href={`https://bracket.game/${homeSlug}`}>
           {" "}
@@ -439,10 +465,10 @@ for (let i = 0; i < games?.length; i++) {
         </Button.Link>,
         nextAction ? (
           <Button value="next" action={nextAction}>
-            Next
+            {rightArrow}
           </Button>
         ) : (
-          <Button.Reset>Reset</Button.Reset>
+          <Button.Reset>Start Over</Button.Reset>
         ),
       ].filter(Boolean),
     });
