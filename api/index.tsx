@@ -204,8 +204,18 @@ async function fetchESPNData(i: number) {
 
     const gameTime = new Date(nextGame.date);
     const formattedDayAndTime = () => {
+      // Create a new Date object for the current date and time
       const today = new Date();
-      if (gameTime.toDateString() === today.toDateString()) {
+
+      // Adjust the time zone offset to Eastern Time (UTC -5 hours for Standard Time, UTC -4 hours for Daylight Saving Time)
+      const easternTimezoneOffset = -5; // Assuming Standard Time
+
+      // Apply the offset to get the Eastern Time Zone date
+      const easternTimezoneDate = new Date(
+        today.getTime() + easternTimezoneOffset * 60 * 60 * 1000
+      );
+
+      if (gameTime.toDateString() === easternTimezoneDate.toDateString()) {
         return `Today ${gameTime.toLocaleString("en-US", {
           hour: "numeric",
           minute: "numeric",
@@ -389,15 +399,19 @@ for (let i = 0; i < games?.length; i++) {
                 alignItems: "center",
               }}
             >
-              {/* Your shape or content goes here */}
-              <span
-                style={{
-                  fontSize: "130px",
-                  color: espnData?.homeTeamAlt,
-                }}
-              >
-                {espnData?.homeTeamShort}
-              </span>
+              {espnData?.gameState === "pre" ? (
+                <span
+                  style={{ fontSize: "130px", color: espnData?.homeTeamAlt }}
+                >
+                  {espnData?.homeTeamShort}
+                </span>
+              ) : (
+                <span
+                  style={{ fontSize: "160px", color: espnData?.homeTeamAlt }}
+                >
+                  {espnData?.homeTeamScore}
+                </span>
+              )}
             </div>
             <div
               style={{
@@ -410,45 +424,29 @@ for (let i = 0; i < games?.length; i++) {
                 alignItems: "center",
               }}
             >
-              {/* Your shape or content goes here */}
-              <span
-                style={{
-                  fontSize: "130px",
-                  color: espnData?.awayTeamAlt,
-                }}
-              >
-                {espnData?.awayTeamShort}
-              </span>
+              {espnData?.gameState === "pre" ? (
+                <span
+                  style={{ fontSize: "130px", color: espnData?.awayTeamAlt }}
+                >
+                  {espnData?.awayTeamShort}
+                </span>
+              ) : (
+                <span
+                  style={{ fontSize: "160px", color: espnData?.awayTeamAlt }}
+                >
+                  {espnData?.awayTeamScore}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Conditionally render based on gameState */}
-          {espnData?.gameState === "pre" ? (
-            <>
-              <div
-                style={{
-                  marginTop: 75,
-                }}
-              >
-                {espnData?.oddsDetails}
-              </div>
-            </>
-          ) : (
-            <div
-              style={{
-                marginTop: 75,
-                display: "flex",
-                flexDirection: "row",
-                width: "35%",
-                alignItems: "center",
-                justifyContent: "space-between",
-                fontSize: 60,
-              }}
-            >
-              <div>{espnData?.homeTeamScore}</div>
-              <div>{espnData?.awayTeamScore}</div>
-            </div>
-          )}
+          <div
+            style={{
+              marginTop: 75,
+            }}
+          >
+            {espnData?.oddsDetails}
+          </div>
         </div>
       ),
       intents: [
