@@ -4,9 +4,9 @@ import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 
 // Uncomment to use Edge Runtime.
-export const config = {
-  runtime: "edge",
-};
+// export const config = {
+//   runtime: "edge",
+// };
 
 function newShade(hexColor: string, magnitude: number): string {
   hexColor = hexColor.replace(`#`, ``);
@@ -215,7 +215,7 @@ async function fetchESPNData(i: number) {
         today.getTime() + easternTimezoneOffset * 60 * 60 * 1000
       );
 
-      if (gameTime.toDateString() === easternTimezoneDate.toDateString()) {
+      if (easternTimezoneDate.toDateString() === today.toDateString()) {
         return `Today ${gameTime.toLocaleString("en-US", {
           hour: "numeric",
           minute: "numeric",
