@@ -215,13 +215,15 @@ async function fetchESPNData(i: number) {
         today.getTime() + easternTimezoneOffset * 60 * 60 * 1000
       );
 
-      if (easternTimezoneDate.toDateString() === today.toDateString()) {
-        return `Today ${gameTime.toLocaleString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-          timeZone: "America/New_York",
-        })} ET`;
+      const gametimeSimple = gameTime.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: "America/New_York",
+      });
+
+      if (easternTimezoneDate.toDateString() === gametimeSimple) {
+        return `Today ${gametimeSimple} ET`;
       } else {
         return `${gameTime.toLocaleString("en-US", {
           weekday: "long",
@@ -231,7 +233,7 @@ async function fetchESPNData(i: number) {
           minute: "numeric",
           hour12: true,
           timeZone: "America/New_York",
-        })}`;
+        })} ET`;
       }
     };
     const gameDay = formattedDayAndTime();
@@ -350,12 +352,12 @@ for (let i = 0; i < games?.length; i++) {
     const espnData = await fetchESPNData(i);
     console.log(espnData);
     // Define the action for the "back" button
-    let backAction = i > 0 ? `/${i - 1}` : `/`;
+    // let backAction = i > 0 ? `/${i - 1}` : `/`;
     // Define the action for the "next" button
     let nextAction = i < espnData?.length - 1 ? `/${i + 1}` : null;
     let homeSlug = espnData?.homeSlug;
     let awaySlug = espnData?.awaySlug;
-    const leftArrow = "\u2190"; // Left arrow ←
+    // const leftArrow = "\u2190"; // Left arrow ←
     const rightArrow = "\u2192";
     // Example usage:
     return c.res({
@@ -450,9 +452,9 @@ for (let i = 0; i < games?.length; i++) {
         </div>
       ),
       intents: [
-        <Button value="back" action={backAction}>
-          {leftArrow}
-        </Button>,
+        // <Button value="back" action={backAction}>
+        //   {leftArrow}
+        // </Button>,
         <Button.Link href={`https://bracket.game/${homeSlug}`}>
           {" "}
           {espnData?.homeTeamShort}
