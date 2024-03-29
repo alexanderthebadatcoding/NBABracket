@@ -207,23 +207,26 @@ async function fetchESPNData(i: number) {
       // Create a new Date object for the current date and time
       const today = new Date();
 
-      // Adjust the time zone offset to Eastern Time (UTC -5 hours for Standard Time, UTC -4 hours for Daylight Saving Time)
-      const easternTimezoneOffset = -5; // Assuming Standard Time
-
-      // Apply the offset to get the Eastern Time Zone date
-      const easternTimezoneDate = new Date(
-        today.getTime() + easternTimezoneOffset * 60 * 60 * 1000
-      );
-
-      const gametimeSimple = gameTime.toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
+      const checkDay = today.toLocaleString("en-US", {
+        weekday: "long",
         timeZone: "America/New_York",
       });
 
-      if (easternTimezoneDate.toDateString() === gametimeSimple) {
-        return `Today ${gametimeSimple} ET`;
+      // console.log(checkDay);
+
+      const gametimeSimple = gameTime.toLocaleString("en-US", {
+        weekday: "long",
+        timeZone: "America/New_York",
+      });
+      // console.log(gametimeSimple);
+
+      if (checkDay === gametimeSimple) {
+        return `Today ${gameTime.toLocaleString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+          timeZone: "America/New_York",
+        })} ET`;
       } else {
         return `${gameTime.toLocaleString("en-US", {
           weekday: "long",
@@ -452,9 +455,6 @@ for (let i = 0; i < games?.length; i++) {
         </div>
       ),
       intents: [
-        // <Button value="back" action={backAction}>
-        //   {leftArrow}
-        // </Button>,
         <Button.Link href={`https://bracket.game/${homeSlug}`}>
           {" "}
           {espnData?.homeTeamShort}
@@ -463,6 +463,9 @@ for (let i = 0; i < games?.length; i++) {
           {" "}
           {espnData?.awayTeamShort}
         </Button.Link>,
+        // <Button value="back" action={backAction}>
+        //   {leftArrow}
+        // </Button>,
         nextAction ? (
           <Button value="next" action={nextAction}>
             {rightArrow}
