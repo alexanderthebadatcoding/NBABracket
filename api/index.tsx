@@ -267,6 +267,7 @@ app.frame("/", (c) => {
         style={{
           alignItems: "center",
           background: "white",
+          backgroundImage: `url("https://nba-bracket-two.vercel.app/peaks.png")`,
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
@@ -294,7 +295,7 @@ app.frame("/", (c) => {
             padding: "0 120px",
             whiteSpace: "pre-wrap",
             fontWeight: "bold",
-            fontFamily: "Inter",
+            fontFamily: "ui-sans-serif,system-ui,sans-serif",
           }}
         >
           Bracket.Game
@@ -334,7 +335,7 @@ for (let i = 0; i < games?.length; i++) {
             fontSize: 66,
             fontWeight: 900,
             color: "black",
-            fontFamily: "Inter",
+            fontFamily: '"Inter"',
           }}
         >
           <div style={{ marginBottom: 85 }}>{espnData?.clock}</div>
@@ -362,7 +363,11 @@ for (let i = 0; i < games?.length; i++) {
             >
               {espnData?.gameState === "pre" ? (
                 <span
-                  style={{ fontSize: "130px", color: espnData?.homeTeamAlt }}
+                  style={{
+                    fontSize: "130px",
+                    color: espnData?.homeTeamAlt,
+                    fontStyle: "italic",
+                  }}
                 >
                   {espnData?.homeTeamShort}
                 </span>
@@ -387,7 +392,11 @@ for (let i = 0; i < games?.length; i++) {
             >
               {espnData?.gameState === "pre" ? (
                 <span
-                  style={{ fontSize: "130px", color: espnData?.awayTeamAlt }}
+                  style={{
+                    fontSize: "130px",
+                    color: espnData?.awayTeamAlt,
+                    fontStyle: "italic",
+                  }}
                 >
                   {espnData?.awayTeamShort}
                 </span>
