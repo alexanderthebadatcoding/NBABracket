@@ -267,7 +267,6 @@ app.frame("/", (c) => {
         style={{
           alignItems: "center",
           background: "white",
-          backgroundImage: `url("https://nba-bracket-two.vercel.app/peaks.png")`,
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
