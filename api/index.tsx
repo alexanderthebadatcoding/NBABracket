@@ -8,6 +8,49 @@ import { handle } from "frog/vercel";
 //   runtime: "edge",
 // };
 
+async function fetchDataAndFindSlug(slugName) {
+  try {
+    // Construct the URL with the provided slug name
+    const url = `https://api.bracket.game/trpc/collective.getPrices?batch=1&input=%7B%220%22%3A%7B%22contract%22%3A%22nba%22%2C%22currency%22%3A%22USDC%22%7D%7D`;
+
+    // Fetch data from the URL
+    const response = await fetch(url);
+    const jsonData = await response.json();
+
+    // console.log("Fetched Data:", jsonData); // Log the fetched data
+
+    // Initialize matching slug and voteCount
+    let matchingSlug;
+    let voteCount;
+
+    // Check if the data and json properties exist in the result
+    if (jsonData.length > 0 && jsonData[0].result && jsonData[0].result.data) {
+      const data = jsonData[0].result.data;
+      // Check if the data object has a json property and it's an array
+      if (data.json && Array.isArray(data.json)) {
+        // Iterate over the json array
+        for (const item of data.json) {
+          if (item.slug === slugName) {
+            matchingSlug = item.slug;
+            voteCount = item.voteCount / 100;
+            break;
+          }
+        }
+      }
+    }
+
+    // Log or return the matching slug and voteCount
+    console.log("Matching Slug:", matchingSlug);
+    console.log("Vote Count:", voteCount);
+    return { slug: matchingSlug, voteCount };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+// Call the function with the desired slug name
+fetchDataAndFindSlug("bucks-nation");
+
 function newShade(hexColor: string, magnitude: number): string {
   hexColor = hexColor.replace(`#`, ``);
   if (hexColor.length === 6) {
@@ -32,120 +75,26 @@ function getSlugByAcronym(ShortName: string) {
     result: {
       data: {
         json: [
-          { acronym: "COFC", slug: "maroon-and-white" },
-          { acronym: "GCU", slug: "havoc-horde" },
-          { acronym: "OAK", slug: "grizz-gang" },
-          { acronym: "COLG", slug: "raiders-rally" },
-          { acronym: "SPU", slug: "peacock-pride" },
-          { acronym: "UV", slug: "catamount-nation" },
-          { acronym: "HOU", slug: "coog-crew" },
-          { acronym: "WIS", slug: "badger-nation" },
-          { acronym: "BYU", slug: "cougar-faithful" },
-          { acronym: "COL", slug: "buff-nation" },
-          { acronym: "UF", slug: "gator-nation" },
-          { acronym: "NW", slug: "wildcat-alliance" },
-          { acronym: "SC", slug: "garnet-nation" },
-          { acronym: "UVA", slug: "hoo-crew" },
-          { acronym: "ZAG", slug: "the-zags" },
-          { acronym: "DUQ", slug: "duke-dynasty" },
-          { acronym: "JMU", slug: "bulldog-legion" },
-          { acronym: "DEL", slug: "hen-nation" },
-          { acronym: "SIN", slug: "scream-circle" },
-          { acronym: "RICE", slug: "owl-watch" },
-          { acronym: "KU", slug: "rock-chalk-nation" },
-          { acronym: "BAY", slug: "bear-nation" },
-          { acronym: "LON", slug: "lancer-strong" },
-          { acronym: "TENN", slug: "rocky-top" },
-          { acronym: "UT", slug: "hookem-nation" },
-          { acronym: "SDSU", slug: "aztec-empire" },
-          { acronym: "MSU", slug: "sparty-nation" },
-          { acronym: "MTS", slug: "bobcat-backers" },
-          { acronym: "STET", slug: "hatter-horde" },
-          { acronym: "LBU", slug: "the-beach" },
-          { acronym: "HOW", slug: "blue-stampede" },
-          { acronym: "WKU", slug: "the-red-towel" },
-          { acronym: "NAL", slug: "purple-and-gold" },
-          { acronym: "LOC", slug: "rambler-faithful" },
-          { acronym: "BUT", slug: "bulldog-battalion" },
-          { acronym: "CONN", slug: "husky-nation" },
-          { acronym: "CREI", slug: "jay-nation" },
-          { acronym: "BING", slug: "bearcat-circle" },
-          { acronym: "LOU", slug: "the-ville" },
-          { acronym: "UCR", slug: "high-ground" },
-          { acronym: "CAMP", slug: "cam-family" },
-          { acronym: "LIB", slug: "flames-up" },
-          { acronym: "SHOU", slug: "bearkcat-pack" },
-          { acronym: "DAY", slug: "flyer-faithful" },
-          { acronym: "ALA", slug: "crimson-nation" },
-          { acronym: "WAG", slug: "seahawk-circle" },
-          { acronym: "CSU", slug: "ram-nation" },
-          { acronym: "STAN", slug: "cardinal-reign" },
-          { acronym: "OMA", slug: "mav-circle" },
-          { acronym: "GST", slug: "panther-pride" },
-          { acronym: "KNST", slug: "owl-family" },
-          { acronym: "SJU", slug: "the-red-storm" },
-          { acronym: "QUE", slug: "royal-regent" },
-          { acronym: "RMU", slug: "the-colony" },
-          { acronym: "COLU", slug: "lion-society" },
-          { acronym: "RID", slug: "broncs-rise" },
-          { acronym: "SIEN", slug: "saints-row" },
-          { acronym: "CMU", slug: "the-chips" },
-          { acronym: "BU", slug: "brave-brigade" },
-          { acronym: "SEMO", slug: "the-red-rising" },
-          { acronym: "ORE", slug: "duck-nation" },
-          { acronym: "SU", slug: "orange-crush" },
-          { acronym: "EKU", slug: "colonel-crew" },
-          { acronym: "BCU", slug: "cook-crew" },
-          { acronym: "MST", slug: "hail-state" },
-          { acronym: "TCU", slug: "horned-legion" },
-          { acronym: "WSU", slug: "wazzu-pride" },
-          { acronym: "STB", slug: "the-sea-pack" },
-          { acronym: "TOW", slug: "tow-together" },
-          { acronym: "ORST", slug: "beaver-brigade" },
-          { acronym: "ILL", slug: "illini-nation" },
-          { acronym: "FUR", slug: "purple-loyal" },
-          { acronym: "WOF", slug: "terrier-tribe" },
-          { acronym: "NOLA", slug: "privateer-pride" },
-          { acronym: "TAMC", slug: "lion-circle" },
-          { acronym: "ION", slug: "the-gael-guard" },
-          { acronym: "MARI", slug: "the-fox-den" },
-          { acronym: "A&M", slug: "aggie-nation" },
-          { acronym: "FAU", slug: "owl-pack" },
-          { acronym: "DRAK", slug: "bulldog-brigade" },
-          { acronym: "TTU", slug: "sclaret-and-black" },
-          { acronym: "FAIR", slug: "stag-force" },
-          { acronym: "NAR", slug: "lumber-legion" },
-          { acronym: "BELL", slug: "knights-watch" },
-          { acronym: "STM", slug: "gael-force" },
-          { acronym: "MAN", slug: "jasper-loyal" },
-          { acronym: "ZONA", slug: "wildcat-nation" },
-          { acronym: "NEB", slug: "husker-horde" },
-          { acronym: "UNM", slug: "lobo-legion" },
-          { acronym: "BUFF", slug: "the-bullhorn" },
-          { acronym: "ULL", slug: "ragin-nation" },
-          { acronym: "DUKE", slug: "the-dukies" },
-          { acronym: "LONG", slug: "lancer-strong" },
-          { acronym: "USU", slug: "aggie-alliance" },
-          { acronym: "PUR", slug: "boiler-up" },
-          { acronym: "GRAM", slug: "black-and-gold" },
-          { acronym: "SMC", slug: "gael-force" },
-          { acronym: "MARQ", slug: "the-flock" },
-          { acronym: "AUB", slug: "war-eagle-nation" },
-          { acronym: "YALE", slug: "bulldog-society" },
-          { acronym: "UVM", slug: "catamount-nation" },
-          { acronym: "UAB", slug: "blazer-alliance" },
-          { acronym: "CLEM", slug: "tiger-family" },
-          { acronym: "COLO", slug: "buff-nation" },
-          { acronym: "FLA", slug: "gator-nation" },
-          { acronym: "NU", slug: "wildcat-alliance" },
-          { acronym: "TA&M", slug: "aggie-nation" },
-          { acronym: "ARIZ", slug: "wildcat-nation" },
-          { acronym: "GONZ", slug: "the-zags" },
-          { acronym: "UNC", slug: "heel-nation" },
-          { acronym: "ISU", slug: "clone-crew" },
-          { acronym: "NCSU", slug: "the-red-pack" },
-          { acronym: "TEX", slug: "hookem-nation" },
-          { acronym: "TEX", slug: "hookem-nation" },
+          { acronym: "BOS", slug: "celtics-nation" },
+          { acronym: "CHI", slug: "bulls-nation" },
+          { acronym: "OKC", slug: "thunder-nation" },
+          { acronym: "NYK", slug: "knickerbockers" },
+          { acronym: "NY", slug: "knickerbockers" },
+          { acronym: "DEN", slug: "nuggets-nation" },
+          { acronym: "MIL", slug: "bucks-nation" },
+          { acronym: "MIN", slug: "wolves-nation" },
+          { acronym: "NOP", slug: "pels-faithful" },
+          { acronym: "NO", slug: "pels-faithful" },
+          { acronym: "CLE", slug: "cavs-nation" },
+          { acronym: "LAC", slug: "clips-nation" },
+          { acronym: "ORL", slug: "magic-nation" },
+          { acronym: "DAL", slug: "mffls" },
+          { acronym: "IND", slug: "pacers-nation" },
+          { acronym: "PHX", slug: "sunsationals" },
+          { acronym: "LAL", slug: "lakers-nation" },
+          { acronym: "PHI", slug: "the-sixth-man" },
+          { acronym: "SAC", slug: "kings-court" },
+          { acronym: "MIA", slug: "heat-nation" },
         ],
       },
     },
@@ -162,7 +111,7 @@ function getSlugByAcronym(ShortName: string) {
 async function fetchESPNData(i: number) {
   try {
     const response = await fetch(
-      "http://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard"
+      "http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
     );
     const data = await response.json();
     // Use ESPN data to populate the frame
@@ -245,6 +194,11 @@ async function fetchESPNData(i: number) {
     const gameState = nextGame.status.type.state;
     const homeSlug = getSlugByAcronym(homeTeamShort);
     const awaySlug = getSlugByAcronym(awayTeamShort);
+    const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
+    const homeTeamPrice = homeTeamBracketData.voteCount;
+    const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
+    const awayTeamPrice = awayTeamBracketData.voteCount;
+
     let clock;
     let oddsDetails = "";
 
@@ -287,6 +241,8 @@ async function fetchESPNData(i: number) {
       awaySlug,
       homeBG,
       awayBG,
+      homeTeamPrice,
+      awayTeamPrice,
     };
   } catch (error) {
     console.error("Error fetching ESPN data:", error);
@@ -448,9 +404,15 @@ for (let i = 0; i < games?.length; i++) {
           <div
             style={{
               marginTop: 75,
+              display: "flex",
+              width: "65%",
+              flexDirection: "row",
+              alignItems: "stretch",
+              justifyContent: "space-between",
             }}
           >
-            {espnData?.oddsDetails}
+            <span>{espnData?.homeTeamPrice} 🎩 </span>
+            <span>{espnData?.awayTeamPrice} 🎩</span>
           </div>
         </div>
       ),
