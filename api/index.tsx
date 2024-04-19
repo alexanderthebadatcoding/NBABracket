@@ -419,8 +419,8 @@ for (let i = 0; i < games?.length; i++) {
               justifyContent: "space-between",
             }}
           >
-            <span>{espnData?.homeTeamPrice} 🎩 </span>
-            <span>{espnData?.awayTeamPrice} 🎩</span>
+            <span>🎩 {espnData?.homeTeamPrice}</span>
+            <span>🎩 {espnData?.awayTeamPrice}</span>
           </div>
         </div>
       ),
