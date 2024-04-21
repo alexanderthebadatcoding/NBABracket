@@ -104,10 +104,10 @@
       async function fetchDataAndFindSlug(slugName) {
         try {
           // Construct the URL with the provided slug name
-          const url = `https://api.bracket.game/trpc/collective.getPrices?batch=1&input=%7B%220%22%3A%7B%22contract%22%3A%22nba%22%2C%22currency%22%3A%22USDC%22%7D%7D`;
+          const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+          const apiUrl = `https://api.bracket.game/trpc/collective.getPrices?batch=1&input=%7B%220%22%3A%7B%22contract%22%3A%22nba%22%2C%22currency%22%3A%22USDC%22%7D%7D`;
 
-          // Fetch data from the URL
-          const response = await fetch(url);
+          const response = await fetch(proxyUrl + apiUrl);
           const jsonData = await response.json();
 
           // Initialize matching slug and voteCount
@@ -181,9 +181,11 @@
 
       async function fetchESPNData() {
         try {
-          const response = await fetch(
-            "http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
-          );
+          const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+          const apiUrl =
+            "http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
+
+          const response = await fetch(proxyUrl + apiUrl);
           const data = await response.json();
           return data;
         } catch (error) {
