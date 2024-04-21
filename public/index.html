@@ -39,7 +39,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        border: 1px solid #891919;
+        /* border: 1px solid #891919; */
         padding: 10px;
       }
 
@@ -91,11 +91,11 @@
   </head>
   <body>
     <h1>NBA Scoreboard</h1>
-    <div class="switch">
+    <!-- <div class="switch">
       <label>
         <input type="checkbox" id="toggleLogos" checked /> Show Logos
       </label>
-    </div>
+    </div> -->
     <div id="scoreboard">
       <!-- Scoreboard content will be added dynamically using JavaScript -->
     </div>
@@ -257,53 +257,65 @@
           }
           const homeSlug = getSlugByAcronym(homeTeamShort);
           const awaySlug = getSlugByAcronym(awayTeamShort);
+
           const homeTeamBracketInterval = setInterval(async () => {
-            const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
-            // Handle the result here
-            let homeTeamPrice = "";
-            if (homeTeamBracketData) {
-              homeTeamPrice = homeTeamBracketData.voteCount;
+            try {
+              const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
+              // Handle the result here
+              let homeTeamPrice = "";
+              if (homeTeamBracketData) {
+                homeTeamPrice = homeTeamBracketData.voteCount;
+              }
+              const resultValue = homeTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
+              console.log(resultValue); // Output the result
+            } catch (error) {
+              console.error("Error fetching home team data:", error);
             }
-            const resultValue = homeTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
           }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
           // const homeTeamBracketData = fetchDataAndFindSlug(homeSlug);
 
           //const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
           //const awayTeamPrice = awayTeamBracketData.voteCount;
 
           const awayTeamBracketInterval = setInterval(async () => {
-            const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
-            // Handle the result here
-            let awayTeamPrice = "";
-            if (awayTeamBracketData) {
-              awayTeamPrice = homeTeamBracketData.voteCount;
+            try {
+              const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
+              // Handle the result here
+              let awayTeamPrice = "";
+              if (awayTeamBracketData) {
+                awayTeamPrice = awayTeamBracketData.voteCount;
+              }
+              const resultValue = awayTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
+              console.log(resultValue); // Output the result
+            } catch (error) {
+              console.error("Error fetching home team data:", error);
             }
-            const resultValue = awayTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
           }, 5 * 60 * 1000); // 5 minutes in milliseconds
 
           // Construct HTML for each event
           scoreboardHTML += `
-                    <div class="event">
-                      <div class="name">${broadcastName}</div>
-                      <div class="clock">${clock}</div>
-                        <div class="teamLogos">
-                            <img src="${homeTeamLogo}" alt="Home Team Logo">
-                            <img src="${awayTeamLogo}" alt="Away Team Logo">
-                        </div>
-                        <div class="score">
-                        <p>${homeTeamScore}</p>
-                        <p>${awayTeamScore}</p>
-                        </div>
-                        <div class="price">
-                        <p>${homeTeamPrice}</p>
-                        <p>${awayTeamPrice}</p>
-                        </div>
-                        <div class="last-play">${lastPlayText}</div>
+                          <div class="event">
+                            <div class="name">${broadcastName}</div>
+                            <div class="clock">${clock}</div>
+                              <div class="teamLogos">
+                                  <img src="${homeTeamLogo}" alt="Home Team Logo">
+                                  <img src="${awayTeamLogo}" alt="Away Team Logo">
+                              </div>
+                              <div class="score">
+                              <p>${homeTeamScore}</p>
+                              <p>${awayTeamScore}</p>
+                              </div>
+                              <div class="price">
+                              <p>${homeTeamPrice}</p>
+                              <p>${awayTeamPrice}</p>
+                              </div>
+                              <div class="last-play">${lastPlayText}</div>
 
-                        <div class="name">${headline}</div>
+                              <div class="name">${headline}</div>
 
-                    </div>
-                `;
+                          </div>
+                      `;
         });
 
         // Update the HTML content of the scoreboard
