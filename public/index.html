@@ -14,16 +14,11 @@
         font-family: "Inter", Arial, Helvetica, sans-serif;
         margin: 0;
         padding: 0;
+        background-color: rgb(29, 27, 27);
+        color: azure;
       }
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .bracket-game {
+      h1 {
         text-align: center;
-        color: black;
       }
       .links {
         text-align: center;
@@ -39,20 +34,275 @@
         text-decoration: none;
         color: #0d1a43;
       }
+      /* Add CSS styling for your scoreboard */
+      .event {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid #891919;
+        padding: 10px;
+      }
+
+      .switch {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .clock {
+        font: 400;
+        font-size: 1.5rem;
+        padding-top: 0.5rem;
+      }
+
+      .name {
+        font: 400;
+        padding-top: 0.5rem;
+        font-size: 1.15rem;
+      }
+
+      .teamLogos {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 60%;
+      }
+      .score {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: space-between;
+        font-size: x-large;
+      }
+
+      .price {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: space-between;
+        font-size: x-large;
+      }
+
+      .teamLogos img {
+        width: 20%; /* Adjust size as needed */
+        height: 20%; /* Adjust size as needed */
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="bracket-game">
-        <h1>Bracket Game</h1>
-        <p>See live game scores and more all in a Frame.</p>
-        <div class="links">
-          <a href="https://warpcast.com/gilbster/0x77e64319"
-            >See it on Warpcast</a
-          >
-          <a href="https://bracket.game">Play the game</a>
-        </div>
-      </div>
+    <h1>NBA Scoreboard</h1>
+    <div class="switch">
+      <label>
+        <input type="checkbox" id="toggleLogos" checked /> Show Logos
+      </label>
     </div>
+    <div id="scoreboard">
+      <!-- Scoreboard content will be added dynamically using JavaScript -->
+    </div>
+
+    <script>
+      async function fetchDataAndFindSlug(slugName) {
+        try {
+          // Construct the URL with the provided slug name
+          const url = `https://api.bracket.game/trpc/collective.getPrices?batch=1&input=%7B%220%22%3A%7B%22contract%22%3A%22nba%22%2C%22currency%22%3A%22USDC%22%7D%7D`;
+
+          // Fetch data from the URL
+          const response = await fetch(url);
+          const jsonData = await response.json();
+
+          // Initialize matching slug and voteCount
+          let matchingSlug;
+          let voteCount;
+
+          // Check if the data and json properties exist in the result
+          if (
+            jsonData.length > 0 &&
+            jsonData[0].result &&
+            jsonData[0].result.data
+          ) {
+            const data = jsonData[0].result.data;
+            // Check if the data object has a json property and it's an array
+            if (data.json && Array.isArray(data.json)) {
+              // Iterate over the json array
+              for (const item of data.json) {
+                if (item.slug === slugName) {
+                  matchingSlug = item.slug;
+                  voteCount = item.voteCount / 100;
+                  break;
+                }
+              }
+            }
+          }
+
+          // Return the matching slug and voteCount
+          return { slug: matchingSlug, voteCount };
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          return null;
+        }
+      }
+
+      function getSlugByAcronym(shortName) {
+        const data = {
+          result: {
+            data: {
+              json: [
+                { acronym: "BOS", slug: "celtics-nation" },
+                { acronym: "CHI", slug: "bulls-nation" },
+                { acronym: "OKC", slug: "thunder-nation" },
+                { acronym: "NYK", slug: "knickerbockers" },
+                { acronym: "NY", slug: "knickerbockers" },
+                { acronym: "DEN", slug: "nuggets-nation" },
+                { acronym: "MIL", slug: "bucks-nation" },
+                { acronym: "MIN", slug: "wolves-nation" },
+                { acronym: "NOP", slug: "pels-faithful" },
+                { acronym: "NO", slug: "pels-faithful" },
+                { acronym: "CLE", slug: "cavs-nation" },
+                { acronym: "LAC", slug: "clips-nation" },
+                { acronym: "ORL", slug: "magic-nation" },
+                { acronym: "DAL", slug: "mffls" },
+                { acronym: "IND", slug: "pacers-nation" },
+                { acronym: "PHX", slug: "sunsationals" },
+                { acronym: "LAL", slug: "lakers-nation" },
+                { acronym: "PHI", slug: "the-sixth-man" },
+                { acronym: "SAC", slug: "kings-court" },
+                { acronym: "MIA", slug: "heat-nation" },
+              ],
+            },
+          },
+        };
+
+        // Find matching acronym and return corresponding slug
+        const match = data.result.data.json.find(
+          (item) => item.acronym === shortName
+        );
+        return match ? match.slug : null;
+      }
+
+      async function fetchESPNData() {
+        try {
+          const response = await fetch(
+            "http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+          );
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Error fetching ESPN data:", error);
+          return null;
+        }
+      }
+
+      function updateScoreboard(data) {
+        const events = data.events;
+        let scoreboardHTML = "";
+
+        events.forEach((event) => {
+          const clock = event.status.type.detail;
+          const homeTeamData = event.competitions[0].competitors[0].team;
+          const awayTeamData = event.competitions[0].competitors[1].team;
+          const homeTeam = homeTeamData.shortDisplayName;
+          const awayTeam = awayTeamData.shortDisplayName;
+          const homeTeamShort = homeTeamData.abbreviation;
+          const awayTeamShort = awayTeamData.abbreviation;
+          const homeTeamLogo = event.competitions[0].competitors[0].team.logo;
+          const awayTeamLogo = event.competitions[0].competitors[1].team.logo;
+          const gameState = event.status.type.state;
+
+          let homeTeamScore = "";
+
+          if (event.status.type.state === "pre") {
+            homeTeamScore = "";
+          } else {
+            homeTeamScore = event.competitions[0].competitors[0].score;
+          }
+
+          let awayTeamScore = "";
+
+          if (event.status.type.state === "pre") {
+            awayTeamScore = "";
+          } else {
+            awayTeamScore = event.competitions[0].competitors[0].score;
+          }
+          let headline = "";
+          if (
+            event.competitions &&
+            event.competitions[0] &&
+            event.competitions[0].notes &&
+            event.competitions[0].notes[0] &&
+            event.competitions[0].notes[0].headline
+          ) {
+            headline = event.competitions[0].notes[0].headline;
+          }
+          let lastPlayText = "";
+          if (
+            event.competitions &&
+            event.competitions[0] &&
+            event.competitions[0].situation &&
+            event.competitions[0].situation.lastPlay &&
+            event.competitions[0].situation.lastPlay.text
+          ) {
+            lastPlayText = event.competitions[0].situation.lastPlay.text;
+          }
+
+          let broadcastName = "";
+          if (
+            event.competitions &&
+            event.competitions[0] &&
+            event.competitions[0].broadcasts &&
+            event.competitions[0].broadcasts[0] &&
+            event.competitions[0].broadcasts[0].names &&
+            event.competitions[0].broadcasts[0].names.length > 0
+          ) {
+            broadcastName = event.competitions[0].broadcasts[0].names[0];
+          }
+          const homeSlug = getSlugByAcronym(homeTeamShort);
+          const awaySlug = getSlugByAcronym(awayTeamShort);
+          const homeTeamBracketData = fetchDataAndFindSlug(homeSlug);
+          const homeTeamPrice = homeTeamBracketData.voteCount;
+          const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
+          const awayTeamPrice = awayTeamBracketData.voteCount;
+
+          // Construct HTML for each event
+          scoreboardHTML += `
+                    <div class="event">
+                      <div class="name">${broadcastName}</div>
+                      <div class="clock">${clock}</div>
+                        <div class="teamLogos">
+                            <img src="${homeTeamLogo}" alt="Home Team Logo">
+                            <img src="${awayTeamLogo}" alt="Away Team Logo">
+                        </div>
+                        <div class="score">
+                        <p>${homeTeamScore}</p>
+                        <p>${awayTeamScore}</p>
+                        </div>
+                        <div class="price">
+                        <p>${homeTeamPrice}</p>
+                        <p>${awayTeamPrice}</p>
+                        </div>
+                        <div class="last-play">${lastPlayText}</div>
+
+                        <div class="name">${headline}</div>
+
+                    </div>
+                `;
+        });
+
+        // Update the HTML content of the scoreboard
+        document.getElementById("scoreboard").innerHTML = scoreboardHTML;
+      }
+
+      async function updateScoreboardPeriodically() {
+        const data = await fetchESPNData();
+        if (data) {
+          updateScoreboard(data);
+        }
+      }
+
+      // Initial update
+      updateScoreboardPeriodically();
+
+      // Set up periodic updates
+      setInterval(updateScoreboardPeriodically, 1600); // Update every minute (adjust as needed)
+    </script>
   </body>
 </html>
