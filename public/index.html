@@ -257,10 +257,29 @@
           }
           const homeSlug = getSlugByAcronym(homeTeamShort);
           const awaySlug = getSlugByAcronym(awayTeamShort);
-          const homeTeamBracketData = fetchDataAndFindSlug(homeSlug);
-          const homeTeamPrice = homeTeamBracketData.voteCount;
-          const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
-          const awayTeamPrice = awayTeamBracketData.voteCount;
+          const homeTeamBracketInterval = setInterval(async () => {
+            const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
+            // Handle the result here
+            let homeTeamPrice = "";
+            if (homeTeamBracketData) {
+              homeTeamPrice = homeTeamBracketData.voteCount;
+            }
+            const resultValue = homeTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
+          }, 5 * 60 * 1000); // 5 minutes in milliseconds
+          // const homeTeamBracketData = fetchDataAndFindSlug(homeSlug);
+
+          //const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
+          //const awayTeamPrice = awayTeamBracketData.voteCount;
+
+          const awayTeamBracketInterval = setInterval(async () => {
+            const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
+            // Handle the result here
+            let awayTeamPrice = "";
+            if (awayTeamBracketData) {
+              awayTeamPrice = homeTeamBracketData.voteCount;
+            }
+            const resultValue = awayTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
+          }, 5 * 60 * 1000); // 5 minutes in milliseconds
 
           // Construct HTML for each event
           scoreboardHTML += `
