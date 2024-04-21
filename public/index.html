@@ -57,7 +57,7 @@
 
       .name {
         font: 400;
-        padding-top: 0.5rem;
+        padding: 0.5rem;
         font-size: 1.15rem;
       }
 
@@ -83,9 +83,19 @@
         font-size: x-large;
       }
 
+      .last-play {
+        text-align: center;
+      }
+
       .teamLogos img {
-        width: 20%; /* Adjust size as needed */
-        height: 20%; /* Adjust size as needed */
+        width: 8rem; /* Adjust size as needed */
+        height: 8rem; /* Adjust size as needed */
+        opacity: 1;
+        -webkit-transition: 0.3s ease-in-out;
+        transition: 0.3s ease-in-out;
+      }
+      .teamLogos img:hover {
+        opacity: 0.65;
       }
     </style>
   </head>
@@ -101,47 +111,6 @@
     </div>
 
     <script>
-      async function fetchDataAndFindSlug(slugName) {
-        try {
-          // Construct the URL with the provided slug name
-          const url = `https://api.bracket.game/trpc/collective.getPrices?batch=1&input=%7B%220%22%3A%7B%22contract%22%3A%22nba%22%2C%22currency%22%3A%22USDC%22%7D%7D`;
-
-          // Fetch data from the URL
-          const response = await fetch(url);
-          const jsonData = await response.json();
-
-          // Initialize matching slug and voteCount
-          let matchingSlug;
-          let voteCount;
-
-          // Check if the data and json properties exist in the result
-          if (
-            jsonData.length > 0 &&
-            jsonData[0].result &&
-            jsonData[0].result.data
-          ) {
-            const data = jsonData[0].result.data;
-            // Check if the data object has a json property and it's an array
-            if (data.json && Array.isArray(data.json)) {
-              // Iterate over the json array
-              for (const item of data.json) {
-                if (item.slug === slugName) {
-                  matchingSlug = item.slug;
-                  voteCount = item.voteCount / 100;
-                  break;
-                }
-              }
-            }
-          }
-
-          // Return the matching slug and voteCount
-          return { slug: matchingSlug, voteCount };
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          return null;
-        }
-      }
-
       function getSlugByAcronym(shortName) {
         const data = {
           result: {
@@ -257,59 +226,18 @@
           }
           const homeSlug = getSlugByAcronym(homeTeamShort);
           const awaySlug = getSlugByAcronym(awayTeamShort);
-          let homeTeamPrice = "";
-
-          const homeTeamBracketInterval = setInterval(async () => {
-            try {
-              const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
-              // Handle the result here
-
-              if (homeTeamBracketData) {
-                homeTeamPrice = homeTeamBracketData.voteCount;
-              }
-              const resultValue = homeTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
-              console.log(resultValue); // Output the result
-            } catch (error) {
-              console.error("Error fetching home team data:", error);
-            }
-          }, 2 * 60 * 1000); // 5 minutes in milliseconds
-
-          // const homeTeamBracketData = fetchDataAndFindSlug(homeSlug);
-
-          //const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
-          //const awayTeamPrice = awayTeamBracketData.voteCount;
-          let awayTeamPrice = "";
-          const awayTeamBracketInterval = setInterval(async () => {
-            try {
-              const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
-              // Handle the result here
-
-              if (awayTeamBracketData) {
-                awayTeamPrice = awayTeamBracketData.voteCount;
-              }
-              const resultValue = awayTeamBracketData || ""; // If homeTeamBracketData is null or undefined, use ""
-              console.log(resultValue); // Output the result
-            } catch (error) {
-              console.error("Error fetching home team data:", error);
-            }
-          }, 5 * 60 * 1000); // 5 minutes in milliseconds
-
           // Construct HTML for each event
           scoreboardHTML += `
                           <div class="event">
                             <div class="name">${broadcastName}</div>
                             <div class="clock">${clock}</div>
                               <div class="teamLogos">
-                                  <img src="${homeTeamLogo}" alt="Home Team Logo">
-                                  <img src="${awayTeamLogo}" alt="Away Team Logo">
+                                  <a href="https://bracket.game/${homeSlug}" target="_blank"><img src="${homeTeamLogo}" alt="Home Team Logo"></a>
+                                  <a href="https://bracket.game/${awaySlug}" target="_blank"><img src="${awayTeamLogo}" alt="Away Team Logo"></a>
                               </div>
                               <div class="score">
                               <p>${homeTeamScore}</p>
                               <p>${awayTeamScore}</p>
-                              </div>
-                              <div class="price">
-                              <p>${homeTeamPrice}</p>
-                              <p>${awayTeamPrice}</p>
                               </div>
                               <div class="last-play">${lastPlayText}</div>
 
