@@ -40,8 +40,8 @@ async function fetchDataAndFindSlug(slugName) {
     }
 
     // Log or return the matching slug and voteCount
-    console.log("Matching Slug:", matchingSlug);
-    console.log("Vote Count:", voteCount);
+    // console.log("Matching Slug:", matchingSlug);
+    // console.log("Vote Count:", voteCount);
     return { slug: matchingSlug, voteCount };
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -49,7 +49,7 @@ async function fetchDataAndFindSlug(slugName) {
 }
 
 // Call the function with the desired slug name
-fetchDataAndFindSlug("bucks-nation");
+// fetchDataAndFindSlug("bucks-nation");
 
 function newShade(hexColor: string, magnitude: number): string {
   hexColor = hexColor.replace(`#`, ``);
@@ -150,6 +150,16 @@ async function fetchESPNData(i: number) {
     ) {
       broadcastName = nextGame.competitions[0].broadcasts[0].names[0];
     }
+    let headline = "";
+    if (
+      nextGame.competitions &&
+      nextGame.competitions[0] &&
+      nextGame.competitions[0].notes &&
+      nextGame.competitions[0].notes[0] &&
+      nextGame.competitions[0].notes[0].headline
+    ) {
+      headline = nextGame.competitions[0].notes[0].headline;
+    }
 
     const gameTime = new Date(nextGame.date);
     const formattedDayAndTime = () => {
@@ -195,9 +205,9 @@ async function fetchESPNData(i: number) {
     const homeSlug = getSlugByAcronym(homeTeamShort);
     const awaySlug = getSlugByAcronym(awayTeamShort);
     const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
-    const homeTeamPrice = homeTeamBracketData.voteCount;
+    const homeTeamPrice = homeTeamBracketData?.voteCount;
     const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
-    const awayTeamPrice = awayTeamBracketData.voteCount;
+    const awayTeamPrice = awayTeamBracketData?.voteCount;
 
     let clock;
     let oddsDetails = "";
@@ -214,6 +224,8 @@ async function fetchESPNData(i: number) {
       ) {
         oddsDetails = nextGame.competitions[0].odds[0].details;
       }
+    } else if (gameState === "post") {
+      clock = headline;
     } else {
       clock = nextGame.status.type.detail;
     }
@@ -243,6 +255,7 @@ async function fetchESPNData(i: number) {
       awayBG,
       homeTeamPrice,
       awayTeamPrice,
+      headline,
     };
   } catch (error) {
     console.error("Error fetching ESPN data:", error);
