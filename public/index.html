@@ -257,12 +257,13 @@
           }
           const homeSlug = getSlugByAcronym(homeTeamShort);
           const awaySlug = getSlugByAcronym(awayTeamShort);
+          let homeTeamPrice = "";
 
           const homeTeamBracketInterval = setInterval(async () => {
             try {
               const homeTeamBracketData = await fetchDataAndFindSlug(homeSlug);
               // Handle the result here
-              let homeTeamPrice = "";
+
               if (homeTeamBracketData) {
                 homeTeamPrice = homeTeamBracketData.voteCount;
               }
@@ -277,12 +278,12 @@
 
           //const awayTeamBracketData = fetchDataAndFindSlug(awaySlug);
           //const awayTeamPrice = awayTeamBracketData.voteCount;
-
+          let awayTeamPrice = "";
           const awayTeamBracketInterval = setInterval(async () => {
             try {
               const awayTeamBracketData = await fetchDataAndFindSlug(awaySlug);
               // Handle the result here
-              let awayTeamPrice = "";
+
               if (awayTeamBracketData) {
                 awayTeamPrice = awayTeamBracketData.voteCount;
               }
