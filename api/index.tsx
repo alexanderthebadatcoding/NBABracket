@@ -232,7 +232,7 @@ async function fetchESPNData(i: number) {
       // console.log(gametimeSimple);
 
       if (checkDay === gametimeSimple) {
-        return `Today ${gameTime.toLocaleString("en-US", {
+        return `${headline.slice(-6)} ${gameTime.toLocaleString("en-US", {
           hour: "numeric",
           minute: "numeric",
           hour12: true,
@@ -421,8 +421,10 @@ for (let i = 0; i < games?.length; i++) {
                 borderRadius: "50%",
                 backgroundColor: `#${espnData?.homeTeamColor}`,
                 display: "flex",
+                textAlign: "center",
                 justifyContent: "center",
                 alignItems: "center",
+                fontFamily: 'Inter, "Inter", sans-serif',
               }}
             >
               {espnData?.gameState === "pre" ? (
@@ -431,13 +433,18 @@ for (let i = 0; i < games?.length; i++) {
                     fontSize: "130px",
                     color: espnData?.homeTeamAlt,
                     fontStyle: "italic",
+                    textAlign: "center",
                   }}
                 >
                   {espnData?.homeTeamShort}
                 </span>
               ) : (
                 <span
-                  style={{ fontSize: "160px", color: espnData?.homeTeamAlt }}
+                  style={{
+                    fontSize: "160px",
+                    color: espnData?.homeTeamAlt,
+                    textAlign: "center",
+                  }}
                 >
                   {espnData?.homeTeamScore}
                 </span>
@@ -452,6 +459,8 @@ for (let i = 0; i < games?.length; i++) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                textAlign: "center",
+                fontFamily: 'Inter, "Inter", sans-serif',
               }}
             >
               {espnData?.gameState === "pre" ? (
@@ -460,13 +469,18 @@ for (let i = 0; i < games?.length; i++) {
                     fontSize: "130px",
                     color: espnData?.awayTeamAlt,
                     fontStyle: "italic",
+                    textAlign: "center",
                   }}
                 >
                   {espnData?.awayTeamShort}
                 </span>
               ) : (
                 <span
-                  style={{ fontSize: "160px", color: espnData?.awayTeamAlt }}
+                  style={{
+                    fontSize: "160px",
+                    color: espnData?.awayTeamAlt,
+                    textAlign: "center",
+                  }}
                 >
                   {espnData?.awayTeamScore}
                 </span>
