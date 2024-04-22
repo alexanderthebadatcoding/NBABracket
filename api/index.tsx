@@ -8,6 +8,17 @@ import { handle } from "frog/vercel";
 //   runtime: "edge",
 // };
 
+function hexToHexAlpha(hex, alpha) {
+  // Remove the hash sign if present
+  hex = hex.replace(/^#/, "");
+
+  // Ensure alpha is within the valid range
+  alpha = Math.round(Math.min(Math.max(0, alpha), 1) * 255);
+
+  // Append the alpha value to the hex color code
+  return `#${hex}${alpha.toString(16).padStart(2, "0")}`;
+}
+
 async function fetchDataAndFindSlug(slugName) {
   try {
     // Construct the URL with the provided slug name
@@ -135,8 +146,7 @@ async function fetchESPNData(i: number) {
     let awayTeamColor = awayTeamData.color;
     let awayTeamAlt = newShade(awayTeamData.alternateColor, 20);
     let homeTeamAlt = newShade(homeTeamData.alternateColor, 20);
-    const homeBG = newShade(homeTeamColor, 59);
-    const awayBG = newShade(awayTeamColor, 79);
+
     if (awayTeamShort === "MIA") {
       awayTeamAlt = "#F9A01B";
     }
@@ -166,6 +176,9 @@ async function fetchESPNData(i: number) {
     if (awayTeamShort === "LAL") {
       awayTeamAlt = "#F9A01B";
     }
+
+    const homeBG = hexToHexAlpha(homeTeamColor, 0.49);
+    const awayBG = hexToHexAlpha(awayTeamColor, 0.49);
 
     let broadcastName = "";
     if (
