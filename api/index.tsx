@@ -49,7 +49,7 @@ async function fetchDataAndFindSlug(slugName) {
 }
 
 // Call the function with the desired slug name
-// fetchDataAndFindSlug("bucks-nation");
+fetchDataAndFindSlug("bucks-nation");
 
 function newShade(hexColor: string, magnitude: number): string {
   hexColor = hexColor.replace(`#`, ``);
@@ -111,7 +111,7 @@ function getSlugByAcronym(ShortName: string) {
 async function fetchESPNData(i: number) {
   try {
     const response = await fetch(
-      "http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+      "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
     );
     const data = await response.json();
     // Use ESPN data to populate the frame
@@ -135,8 +135,8 @@ async function fetchESPNData(i: number) {
     const awayTeamColor = awayTeamData.color;
     const awayTeamAlt = newShade(awayTeamData.alternateColor, 20);
     const homeTeamAlt = newShade(homeTeamData.alternateColor, 20);
-    const homeBG = newShade(homeTeamColor, 69);
-    const awayBG = newShade(awayTeamColor, 69);
+    const homeBG = newShade(homeTeamColor, 59);
+    const awayBG = newShade(awayTeamColor, 79);
 
     let broadcastName = "";
     if (
@@ -159,6 +159,16 @@ async function fetchESPNData(i: number) {
       nextGame.competitions[0].notes[0].headline
     ) {
       headline = nextGame.competitions[0].notes[0].headline;
+    }
+
+    let seriesNotes = "";
+    if (
+      nextGame.competitions &&
+      nextGame.competitions[0] &&
+      nextGame.competitions[0].series &&
+      nextGame.competitions[0].series.summary
+    ) {
+      seriesNotes = nextGame.competitions[0].series.summary;
     }
 
     const gameTime = new Date(nextGame.date);
@@ -214,7 +224,7 @@ async function fetchESPNData(i: number) {
 
     if (gameState === "pre") {
       // Extract odds details if available
-      clock = gameDay;
+      clock = gameDay.toUpperCase();
       if (
         nextGame &&
         nextGame.competitions &&
@@ -225,9 +235,9 @@ async function fetchESPNData(i: number) {
         oddsDetails = nextGame.competitions[0].odds[0].details;
       }
     } else if (gameState === "post") {
-      clock = headline;
+      clock = seriesNotes.toUpperCase();
     } else {
-      clock = nextGame.status.type.detail;
+      clock = nextGame.status.type.detail.toUpperCase();
     }
     return {
       length,
@@ -256,6 +266,7 @@ async function fetchESPNData(i: number) {
       homeTeamPrice,
       awayTeamPrice,
       headline,
+      seriesNotes,
     };
   } catch (error) {
     console.error("Error fetching ESPN data:", error);
@@ -343,8 +354,9 @@ for (let i = 0; i < games?.length; i++) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundImage: `linear-gradient(to right, ${espnData?.homeBG}, #fff, ${espnData?.awayBG})`,
-            fontSize: 66,
+            background: "white",
+            backgroundImage: `linear-gradient(to right top, ${espnData?.homeBG}, ${espnData?.awayBG})`,
+            fontSize: 62,
             fontWeight: 900,
             color: "black",
             fontFamily: '"Inter"',
