@@ -40,7 +40,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        border-bottom: 1.25px solid #194ff7;
+        border-top: 1.25px solid #194ff7;
         padding: 10px;
       }
 
@@ -278,6 +278,17 @@
           ) {
             broadcastName = event.competitions[0].broadcasts[0].names[0];
           }
+
+          let seriesNotes = "";
+          if (
+            event.competitions &&
+            event.competitions[0] &&
+            event.competitions[0].series &&
+            event.competitions[0].series.summary
+          ) {
+            seriesNotes = event.competitions[0].series.summary;
+          }
+
           const homeSlug = getSlugByAcronym(homeTeamShort);
           const awaySlug = getSlugByAcronym(awayTeamShort);
           const homePrice = fetchDataAndFindSlug(homeSlug) ?? "";
@@ -297,13 +308,11 @@
                               <p>${homeTeamScore}</p>
                               <p>${awayTeamScore}</p>
                               </div>
-                              <div class="score">
-                              <p>${homePrice}</p>
-                              <p>${awayPrice}</p>
-                              </div>
                               <div class="last-play">${lastPlayText}</div>
 
                               <div class="name">${headline}</div>
+                              <div class="name">${seriesNotes}</div>
+
 
                           </div>
                       `;
