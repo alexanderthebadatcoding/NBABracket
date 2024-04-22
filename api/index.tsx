@@ -124,19 +124,39 @@ async function fetchESPNData(i: number) {
     // Extract relevant information
     const homeTeamData = nextGame.competitions[0].competitors[0].team;
     const awayTeamData = nextGame.competitions[0].competitors[1].team;
-    const homeTeamLogoUrl = homeTeamData.logo;
-    const awayTeamLogoUrl = awayTeamData.logo;
+    // const homeTeamLogoUrl = homeTeamData.logo;
+    // const awayTeamLogoUrl = awayTeamData.logo;
     const homeTeam = homeTeamData.shortDisplayName;
     const awayTeam = awayTeamData.shortDisplayName;
     const homeTeamShort = homeTeamData.abbreviation;
     const awayTeamShort = awayTeamData.abbreviation;
     // const homeTeamAlt = homeTeamData.alternateColor;
-    const homeTeamColor = homeTeamData.color;
-    const awayTeamColor = awayTeamData.color;
-    const awayTeamAlt = newShade(awayTeamData.alternateColor, 20);
-    const homeTeamAlt = newShade(homeTeamData.alternateColor, 20);
+    let homeTeamColor = homeTeamData.color;
+    let awayTeamColor = awayTeamData.color;
+    let awayTeamAlt = newShade(awayTeamData.alternateColor, 20);
+    let homeTeamAlt = newShade(homeTeamData.alternateColor, 20);
     const homeBG = newShade(homeTeamColor, 59);
     const awayBG = newShade(awayTeamColor, 79);
+    if (awayTeamShort === "MIA") {
+      awayTeamAlt = "#F9A01B";
+    }
+
+    if (homeTeamShort === "LAC") {
+      homeTeamColor = "016BB6";
+      homeTeamAlt = "#ffffff";
+    }
+
+    if (homeTeamShort === "MIL") {
+      homeTeamAlt = "#EEE1C6";
+    }
+
+    if (homeTeamShort === "OKC") {
+      homeTeamAlt = "#ffffff";
+    }
+
+    if (awayTeamShort === "DAL") {
+      awayTeamColor = "012B5E";
+    }
 
     let broadcastName = "";
     if (
@@ -245,8 +265,6 @@ async function fetchESPNData(i: number) {
       awayTeam,
       homeTeamShort,
       awayTeamShort,
-      homeTeamLogoUrl,
-      awayTeamLogoUrl,
       homeTeamColor,
       awayTeamColor,
       homeTeamAlt,
