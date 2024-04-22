@@ -146,6 +146,11 @@ async function fetchESPNData(i: number) {
       homeTeamAlt = "#ffffff";
     }
 
+    if (awayTeamShort === "PHI") {
+      awayTeamColor = "016BB6";
+      awayTeamAlt = "#ffffff";
+    }
+
     if (homeTeamShort === "MIL") {
       homeTeamAlt = "#EEE1C6";
     }
@@ -156,6 +161,10 @@ async function fetchESPNData(i: number) {
 
     if (awayTeamShort === "DAL") {
       awayTeamColor = "012B5E";
+    }
+
+    if (awayTeamShort === "LAL") {
+      awayTeamAlt = "#F9A01B";
     }
 
     let broadcastName = "";
